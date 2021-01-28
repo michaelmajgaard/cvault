@@ -7,20 +7,35 @@
 
 void print_help() {
     printf("usage:\n"
-           "\tcvaultkg --output <file>\n"
-           "\tcvaultkg -o <file>\n\n"
+           "\tcvaultkg --size 256 --output <file>\n"
+           "\tcvaultkg -s 256 -o <file>\n\n"
            "options:\n"
-           "\t-o --output <file>\tPath to key file.\n");
+           "\t-o --output <file>\tPath to key file.\n"
+           "\t-s --size {256 | 512}\tKey size in bits.\n");
 }
 
-int parse_pos_args(char *argv[], char **kf) {
-
-    return (!strcmp(argv[1], "-o") || !strcmp(argv[1], "--output")) &&
-           (*kf = argv[2]);
+int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
+    for (int i = 0; i < optc; ++i) {
+        if (!strcmp(arg, opts[i])) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
-int parse_args(int argc, char *argv[], char **kf) {
-    return argc == 3 && parse_pos_args(argv, kf);
+int parse_pos_args(char *argv[], int kfi, int si, char **kf, char **s) {
+    return (!strcmp(argv[kfi], "-o") || !strcmp(argv[kfi], "--output")) &&
+           (!strcmp(argv[si], "-s") || !strcmp(argv[si], "--size")) &&
+           (*kf = argv[kfi + 1]) && (*s = argv[si + 1]);
+}
+
+int parse_args(int argc, char *argv[], char **kf, char **s) {
+    if (argc == 5 && parse_pos_args(argv, 1, 3, kf, s) ||
+        parse_pos_args(argv, 3, 1, kf, s)) {
+        char *optv[3] = {"256", "512"};
+        return parse_mut_excl_arg(*s, 2, optv);
+    }
+    return 0;
 }
 
 char *genkey(int l) {
@@ -33,8 +48,8 @@ char *genkey(int l) {
 }
 
 int main(int argc, char *argv[]) {
-    char *kf, *key;
-    if (!parse_args(argc, argv, &kf)) {
+    char *kf, *si, *key;
+    if (!parse_args(argc, argv, &kf, &si)) {
         print_help();
         return -1;
     }
