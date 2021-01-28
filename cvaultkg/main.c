@@ -46,13 +46,13 @@ char *genkey(int bit_size) {
 }
 
 int main(int argc, char *argv[]) {
-    char *si, *key;
-    if (!parse_args(argc, argv, &si)) {
+    char *s, *key;
+    if (!parse_args(argc, argv, &s)) {
         print_help();
         return -1;
     }
     srand(time(0));
-    key = genkey(atoi(si));
+    key = genkey(atoi(s));
     printf("%s\n", key);
     free(key);
     return 0;
