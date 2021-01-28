@@ -15,8 +15,8 @@ void print_help() {
 
 int parse_pos_args(char *argv[], char **kf) {
 
-    return !strcmp(argv[1], "-o") ||
-           !strcmp(argv[1], "--output") && (*kf = argv[2]);
+    return (!strcmp(argv[1], "-o") || !strcmp(argv[1], "--output")) &&
+           (*kf = argv[2]);
 }
 
 int parse_args(int argc, char *argv[], char **kf) {
@@ -24,10 +24,11 @@ int parse_args(int argc, char *argv[], char **kf) {
 }
 
 char *genkey(int l) {
-    char *buffer = (char *)malloc(l * sizeof(char));
+    char *buffer = (char *)malloc((l + 1) * sizeof(char));
     for (int i = 0; i < l; ++i) {
         buffer[i] = 126 - rand() % 93;
     }
+    buffer[l] = '\0';
     return buffer;
 }
 
