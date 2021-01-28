@@ -24,9 +24,18 @@ int parse_args(int argc, char *argv[], char **kf, char **df) {
                          parse_pos_args(argv, 3, 1, kf, df));
 }
 
+int read_key_file(char *kfp, char **key) {
+    FILE *fp;
+    if ((fp = fopen(kfp, "r"))) {
+        fclose(fp);
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
-    char *kf, *df;
-    if (!parse_args(argc, argv, &kf, &df)) {
+    char *kf, *df, *key;
+    if (!parse_args(argc, argv, &kf, &df) || !read_key_file(kf, &key)) {
         print_help();
         return -1;
     }
