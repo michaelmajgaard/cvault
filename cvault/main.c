@@ -24,20 +24,29 @@ int parse_args(int argc, char *argv[], char **kf, char **df) {
                          parse_pos_args(argv, 3, 1, kf, df));
 }
 
-int read_key_file(char *kfp, char **key) {
+int read_all_text(char *path, char **content) {
     FILE *fp;
-    if ((fp = fopen(kfp, "r"))) {
-        fclose(fp);
-        return 1;
+    if ((fp = fopen(path, "r")) != NULL) {
+        fseek(fp, 0L, SEEK_END);
+        int l;
+        if ((l = ftell(fp)) > 0) {
+            *content = (char *)malloc((l + 1) * sizeof(char));
+            rewind(fp);
+            fread(*content, 1, l, fp);
+            fclose(fp);
+            return 1;
+        }
     }
     return 0;
 }
 
 int main(int argc, char *argv[]) {
     char *kf, *df, *key;
-    if (!parse_args(argc, argv, &kf, &df) || !read_key_file(kf, &key)) {
+    if (!parse_args(argc, argv, &kf, &df) || !read_all_text(kf, &key)) {
         print_help();
         return -1;
     }
+    printf("%s", key);
+    free(key);
     return 0;
 }
