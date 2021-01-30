@@ -33,12 +33,15 @@ int read_all_text(char *path, char **content) {
             *content = (char *)malloc((l + 1) * sizeof(char));
             rewind(fp);
             fread(*content, 1, l, fp);
+            (*content)[l] = '\0';
             fclose(fp);
             return 1;
         }
     }
     return 0;
 }
+
+char *xor_otp(char *pt) { int l = strlen(pt); }
 
 int main(int argc, char *argv[]) {
     char *kf, *df, *key;
