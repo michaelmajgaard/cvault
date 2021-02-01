@@ -68,7 +68,10 @@ char *genkey(int length) {
     return buffer;
 }
 
-char *xor_otp(char *pt) { int l = strlen(pt); }
+char *xor_otp(char *pt) {
+    // todo implemen xor otp
+    return pt;
+}
 
 int main(int argc, char *argv[]) {
     char *e, *v, *kf, *df, *entry, *value, *key, *data;
