@@ -42,21 +42,25 @@ int parse_args(int argc, char *argv[], char **e, char **v, char **kf,
         return 0;
     }
 
-    int ord[4], i = 0;
+    int ord[4], i = 0, r = 0;
     char *p = permute("1357");
-    while (*p) {
-        if (*p == '\n') {
+    char *ptr = p;
+    while (*ptr) {
+        if (*ptr == '\n') {
             if (parse_pos_args(argv, ord[0], ord[1], ord[2], ord[3], e, v, kf,
                                df)) {
-                return 1;
+                r = 1;
+                break;
             }
             i = 0;
+        } else {
+            ord[i] = *ptr - '0';
+            ++i;
         }
-        ord[i] = *p - '0';
-        ++i;
-        ++p;
+        ++ptr;
     }
-    return 0;
+    free(p);
+    return r;
 }
 
 int read_all_text(char *path, char **content) {

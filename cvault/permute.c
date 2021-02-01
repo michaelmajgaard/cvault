@@ -16,9 +16,9 @@ void rec_permute(char *v, int ci, int ei, int l, char **r) {
         strcat(*r, buffer);
     } else {
         for (int i = ci; i <= ei; ++i) {
-            swap_chars((v + ci), (v + i));
+            swap_chars(v + ci, v + i);
             rec_permute(v, ci + 1, ei, l, r);
-            swap_chars((v + ci), (v + i));
+            swap_chars(v + ci, v + i);
         }
     }
 }
