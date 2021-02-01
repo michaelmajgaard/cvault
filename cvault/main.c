@@ -1,3 +1,4 @@
+#include "permute.h"
 #include <openssl/aes.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
@@ -37,9 +38,25 @@ int parse_pos_args(char *argv[], int ei, int vi, int kfi, int dfi, char **e,
 
 int parse_args(int argc, char *argv[], char **e, char **v, char **kf,
                char **df) {
-    // todo calc permutations
-    return argc == 9 && (parse_pos_args(argv, 1, 3, 5, 7, e, v, kf, df) ||
-                         parse_pos_args(argv, 3, 1, 7, 5, e, v, kf, df));
+    if (argc != 9) {
+        return 0;
+    }
+
+    int ord[4], i = 0;
+    char *p = permute("1357");
+    while (*p) {
+        if (*p == '\n') {
+            if (parse_pos_args(argv, ord[0], ord[1], ord[2], ord[3], e, v, kf,
+                               df)) {
+                return 1;
+            }
+            i = 0;
+        }
+        ord[i] = *p - '0';
+        ++i;
+        ++p;
+    }
+    return 0;
 }
 
 int read_all_text(char *path, char **content) {
