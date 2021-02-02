@@ -6,15 +6,18 @@
 #include <string.h>
 
 void print_help() {
-    printf("usage:\n"
-           "\tcvault add --entry <entry> --value <value> --key-file <file> "
-           "--data-file <file>\n"
-           "\tcvault -e <entry> -v <value> -k <file> -d <file>\n\n"
-           "options:\n"
-           "\t-e --entry <file>\tIdentifier of a given entry.\n"
-           "\t-v --value <value>\tValue to be stored under the given entry.\n"
-           "\t-k --key-file <file>\tPath to key file.\n"
-           "\t-d --data-file <file>\tPath to data file.\n");
+    printf(
+        "usage:\n"
+        "\tcvault add --entry <entry> --value <value> --key-dir <directory> "
+        "--data-dir <directory>\n"
+        "\tcvault add -e <entry> -v <value> -k <directory> -d <directory>\n\n"
+        "commands:\n"
+        "\tadd\tAdds the specified entry to the data file\n\n"
+        "options:\n"
+        "\t-e --entry <entry>\tIdentifier of a given entry.\n"
+        "\t-v --value <value>\tValue to be stored under the given entry.\n"
+        "\t-k --key-dir <directory>\tPath to key file.\n"
+        "\t-d --data-dir <directory>\tPath to data file.\n");
 }
 
 int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
@@ -26,29 +29,29 @@ int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
     return 0;
 }
 
-int parse_pos_args(char *argv[], int ei, int vi, int kfi, int dfi, char **e,
-                   char **v, char **kf, char **df) {
+int parse_pos_args(char *argv[], int ei, int vi, int kdi, int ddi, char **e,
+                   char **v, char **kd, char **dd) {
     return (!strcmp(argv[ei], "-e") || !strcmp(argv[ei], "--entry")) &&
            (!strcmp(argv[vi], "-v") || !strcmp(argv[vi], "--value")) &&
-           (!strcmp(argv[kfi], "-k") || !strcmp(argv[kfi], "--key-file")) &&
-           (!strcmp(argv[dfi], "-d") || !strcmp(argv[dfi], "--data-file")) &&
+           (!strcmp(argv[kdi], "-k") || !strcmp(argv[kdi], "--key-dir")) &&
+           (!strcmp(argv[ddi], "-d") || !strcmp(argv[ddi], "--data-dir")) &&
            (*e = argv[ei + 1]) && (*v = argv[vi + 1]) &&
-           (*kf = argv[kfi + 1]) && (*df = argv[dfi + 1]);
+           (*kd = argv[kdi + 1]) && (*dd = argv[ddi + 1]);
 }
 
-int parse_args(int argc, char *argv[], char **e, char **v, char **kf,
-               char **df) {
-    if (argc != 9) {
+int parse_args(int argc, char *argv[], char **c, char **e, char **v, char **kd,
+               char **dd) {
+    char *opts[] = {"add"};
+    if (argc != 10 || !parse_mut_excl_arg((*c = argv[1]), 1, opts)) {
         return 0;
     }
-
     int ord[4], i = 0, r = 0;
-    char *p = permute("1357");
+    char *p = permute("2468");
     char *ptr = p;
     while (*ptr) {
         if (*ptr == '\n') {
-            if (parse_pos_args(argv, ord[0], ord[1], ord[2], ord[3], e, v, kf,
-                               df)) {
+            if (parse_pos_args(argv, ord[0], ord[1], ord[2], ord[3], e, v, kd,
+                               dd)) {
                 r = 1;
                 break;
             }
@@ -68,7 +71,7 @@ int read_all_text(char *path, char **content) {
     if ((fp = fopen(path, "r")) != NULL) {
         fseek(fp, 0L, SEEK_END);
         int l;
-        if ((l = ftell(fp)) > 0) {
+        if ((l = ftell(fp)) >= 0) {
             *content = (char *)malloc((l + 1) * sizeof(char));
             rewind(fp);
             fread(*content, 1, l, fp);
@@ -94,14 +97,16 @@ char *xor_otp(char *pt) {
     return pt;
 }
 
+int add(char **e, char **v, char **kd, char **dd) { printf("add\n"); }
+
 int main(int argc, char *argv[]) {
-    char *e, *v, *kf, *df, *entry, *value, *key, *data;
-    if (!parse_args(argc, argv, &e, &v, &kf, &df) || !read_all_text(kf, &key) ||
-        !read_all_text(df, &data)) {
+    char *c, *e, *v, *kd, *dd, *entry, *value;
+    if (!parse_args(argc, argv, &c, &e, &v, &kd, &dd)) {
         print_help();
         return -1;
     }
-    printf("%s", key);
-    free(key);
+    if (!strcmp(c, "add")) {
+        add(&e, &v, &kd, &dd);
+    }
     return 0;
 }
