@@ -1,8 +1,5 @@
-#include "permute.h"
-#include <openssl/aes.h>
-#include <openssl/err.h>
-#include <openssl/evp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 void print_help() {
@@ -29,41 +26,16 @@ int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
     return 0;
 }
 
-int parse_pos_args(char *argv[], int ei, int vi, int kdi, int ddi, char **e,
-                   char **v, char **kd, char **dd) {
-    return (!strcmp(argv[ei], "-e") || !strcmp(argv[ei], "--entry")) &&
-           (!strcmp(argv[vi], "-v") || !strcmp(argv[vi], "--value")) &&
-           (!strcmp(argv[kdi], "-k") || !strcmp(argv[kdi], "--key-dir")) &&
-           (!strcmp(argv[ddi], "-d") || !strcmp(argv[ddi], "--data-dir")) &&
-           (*e = argv[ei + 1]) && (*v = argv[vi + 1]) &&
-           (*kd = argv[kdi + 1]) && (*dd = argv[ddi + 1]);
-}
-
-int parse_args(int argc, char *argv[], char **c, char **e, char **v, char **kd,
-               char **dd) {
-    char *opts[] = {"add"};
-    if (argc != 10 || !parse_mut_excl_arg((*c = argv[1]), 1, opts)) {
-        return 0;
-    }
-    int ord[4], i = 0, r = 0;
-    char *p = permute("2468");
-    char *ptr = p;
-    while (*ptr) {
-        if (*ptr == '\n') {
-            if (parse_pos_args(argv, ord[0], ord[1], ord[2], ord[3], e, v, kd,
-                               dd)) {
-                r = 1;
-                break;
-            }
-            i = 0;
-        } else {
-            ord[i] = *ptr - '0';
-            ++i;
+int parse_pos_arg(int argc, char *argv[], char *short_name, char *long_name,
+                  char **value) {
+    for (int i = 0; i < argc - 1; ++i) {
+        char *cur = argv[i];
+        if (!strcmp(cur, short_name) || !strcmp(cur, long_name)) {
+            *value = argv[i + 1];
+            return 1;
         }
-        ++ptr;
     }
-    free(p);
-    return r;
+    return 0;
 }
 
 int read_all_text(char *path, char **content) {
@@ -97,16 +69,20 @@ char *xor_otp(char *pt) {
     return pt;
 }
 
-int add(char **e, char **v, char **kd, char **dd) { printf("add\n"); }
-
 int main(int argc, char *argv[]) {
-    char *c, *e, *v, *kd, *dd, *entry, *value;
-    if (!parse_args(argc, argv, &c, &e, &v, &kd, &dd)) {
-        print_help();
-        return -1;
+    char *command, *commands[] = {"add"}, *entry, *key_dir, *data_dir;
+    if (argc >= 9 && parse_mut_excl_arg((command = argv[1]), 1, commands) &&
+        parse_pos_arg(argc, argv, "-e", "--entry", &entry) &&
+        parse_pos_arg(argc, argv, "-k", "--key-dir", &key_dir) &&
+        parse_pos_arg(argc, argv, "-d", "--data-dir", &data_dir)) {
+        if (argc == 10 && !strcmp(command, "add")) {
+            char *value;
+            if (parse_pos_arg(argc, argv, "-v", "--value", &value)) {
+                printf("add\n");
+                return 0;
+            }
+        }
     }
-    if (!strcmp(c, "add")) {
-        add(&e, &v, &kd, &dd);
-    }
-    return 0;
+    print_help();
+    return -1;
 }
