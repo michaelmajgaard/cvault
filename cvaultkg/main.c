@@ -1,4 +1,4 @@
-#include <crypt.h>
+#include "arg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,24 +13,10 @@ void print_help() {
            "\t-s --size {64 | 128 | 256 | 512}\tKey size in bits.\n");
 }
 
-int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
-    for (int i = 0; i < optc; ++i) {
-        if (!strcmp(arg, opts[i])) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int parse_pos_args(char *argv[], char **s) {
-    return (!strcmp(argv[1], "-s") || !strcmp(argv[1], "--size")) &&
-           (*s = argv[2]);
-}
-
 int parse_args(int argc, char *argv[], char **s) {
-    if (argc == 3 && parse_pos_args(argv, s)) {
+    if (argc == 3 && parse_pos_arg(argc, argv, "-s", "--size", s)) {
         char *optv[4] = {"64", "128", "256", "512"};
-        return parse_mut_excl_arg(*s, 4, optv);
+        return contains(*s, 4, optv);
     }
     return 0;
 }
