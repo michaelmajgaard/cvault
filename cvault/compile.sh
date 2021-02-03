@@ -1,2 +1,3 @@
 #!/bin/sh
-gcc -ggdb -o main.o main.c $1
+cp ../../cutils/arg.* ./ 2>/dev/null
+gcc -ggdb -o main.o main.c arg.c $1

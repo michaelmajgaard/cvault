@@ -1,3 +1,4 @@
+#include "arg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,27 +17,6 @@ void print_help() {
         "\t-v --value <value>\tValue to be stored under the given entry.\n"
         "\t-k --key-dir <directory>\tPath to key file.\n"
         "\t-d --data-dir <directory>\tPath to data file.\n");
-}
-
-int parse_mut_excl_arg(char *arg, int optc, char *opts[]) {
-    for (int i = 0; i < optc; ++i) {
-        if (!strcmp(arg, opts[i])) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int parse_pos_arg(int argc, char *argv[], char *short_name, char *long_name,
-                  char **value) {
-    for (int i = 0; i < argc - 1; ++i) {
-        char *cur = argv[i];
-        if (!strcmp(cur, short_name) || !strcmp(cur, long_name)) {
-            *value = argv[i + 1];
-            return 1;
-        }
-    }
-    return 0;
 }
 
 int read_all_text(char *path, char **content) {
@@ -91,7 +71,7 @@ int add(char *entry, char *value, char *key_dir, char *data_dir) {
 
 int main(int argc, char *argv[]) {
     char *command, *commands[] = {"add"}, *entry, *key_dir, *data_dir;
-    if (argc >= 9 && parse_mut_excl_arg((command = argv[1]), 1, commands) &&
+    if (argc >= 9 && contains((command = argv[1]), 1, commands) &&
         parse_pos_arg(argc, argv, "-e", "--entry", &entry) &&
         parse_pos_arg(argc, argv, "-k", "--key-dir", &key_dir) &&
         parse_pos_arg(argc, argv, "-d", "--data-dir", &data_dir)) {
