@@ -1,6 +1,0 @@
-usage:
-	cvaultkg --size 256
-	cvaultkg -s 256 
-
-options:
-	-s --size {64 | 128 | 256 | 512}	Key size in bits.
