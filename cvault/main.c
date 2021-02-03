@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 void print_help() {
     printf(
@@ -58,15 +59,34 @@ int read_all_text(char *path, char **content) {
 char *genkey(int length) {
     char *buffer = (char *)malloc((length + 1) * sizeof(char));
     for (int i = 0; i < length; ++i) {
-        buffer[i] = rand() % 255;
+        buffer[i] = rand() % 254 + 1;
     }
     buffer[length] = '\0';
     return buffer;
 }
 
-char *xor_otp(char *pt) {
-    // todo implemen xor otp
-    return pt;
+char *xor_otp(int length, char *value, char *otp_key) {
+    char *otp = (char *)malloc((length + 1) * sizeof(char));
+    for (int i = 0; i < length; ++i) {
+        otp[i] = (char)(value[i] ^ otp_key[i]);
+    }
+    otp[length] = '\0';
+    return otp;
+}
+
+int add(char *entry, char *value, char *key_dir, char *data_dir) {
+    int length;
+    char *otp_key, *otp;
+    srand(time(0));
+    length = strlen(value);
+    otp_key = genkey(length);
+    otp = xor_otp(length, value, otp_key);
+
+    // todo write to files
+
+    free(otp);
+    free(otp_key);
+    return 1;
 }
 
 int main(int argc, char *argv[]) {
@@ -78,8 +98,9 @@ int main(int argc, char *argv[]) {
         if (argc == 10 && !strcmp(command, "add")) {
             char *value;
             if (parse_pos_arg(argc, argv, "-v", "--value", &value)) {
-                printf("add\n");
-                return 0;
+                if (add(entry, value, key_dir, data_dir)) {
+                    return 0;
+                }
             }
         }
     }
