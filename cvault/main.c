@@ -36,6 +36,14 @@ int read_all_text(char *path, char **content) {
     return 0;
 }
 
+int write_to_file(char *path, char *content) {
+    FILE *fp;
+    if ((fp = fopen(path, "w+")) != NULL) {
+        fprintf(fp, content);
+        fclose(fp);
+    }
+}
+
 char *genkey(int length) {
     char *buffer = (char *)malloc((length + 1) * sizeof(char));
     for (int i = 0; i < length; ++i) {
@@ -54,16 +62,27 @@ char *xor_otp(int length, char *value, char *otp_key) {
     return otp;
 }
 
+void combine_path(char *x, char *y, char **combined) {
+    strcat(*combined, x);
+    strcat(*combined, "/\0");
+    strcat(*combined, y);
+}
+
 int add(char *entry, char *value, char *key_dir, char *data_dir) {
     int length;
-    char *otp_key, *otp;
+    char *otp_key, *otp, *key_path, *data_path;
+    key_path = malloc((strlen(key_dir) + strlen(entry) + 2) * sizeof(char));
+    data_path = malloc((strlen(data_dir) + strlen(entry) + 2) * sizeof(char));
+    combine_path(key_dir, entry, &key_path);
+    combine_path(data_dir, entry, &data_path);
     srand(time(0));
     length = strlen(value);
     otp_key = genkey(length);
     otp = xor_otp(length, value, otp_key);
-
-    // todo write to files
-
+    write_to_file(data_path, otp);
+    write_to_file(key_path, otp_key);
+    free(key_path);
+    free(data_path);
     free(otp);
     free(otp_key);
     return 1;
