@@ -30,8 +30,18 @@ int write_all_text(char *path, char *content) {
     return 0;
 }
 
-void combine_path(char *x, char *y, char **combined) {
-    strcat(*combined, x);
-    strcat(*combined, "/\0");
-    strcat(*combined, y);
+char *combine_path(char *x, char *y) {
+    char *buffer;
+    int x_length = strlen(x), sep = y[0] != '/';
+    x_length = x_length - (x[x_length - 1] == '/');
+    buffer = malloc((x_length + strlen(y) + sep + 1) * sizeof(char));
+    for (int i = 0; i < x_length; ++i) {
+        buffer[i] = x[i];
+    }
+    buffer[x_length] = '\0';
+    if (sep) {
+        strcat(buffer, "/\0");
+    }
+    strcat(buffer, y);
+    return buffer;
 }

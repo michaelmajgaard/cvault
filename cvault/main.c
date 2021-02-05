@@ -41,10 +41,8 @@ char *xor_otp(int length, char *value, char *otp_key) {
 int add(char *entry, char *value, char *key_dir, char *data_dir) {
     int length, result;
     char *otp_key, *otp, *key_path, *data_path;
-    key_path = malloc((strlen(key_dir) + strlen(entry) + 2) * sizeof(char));
-    data_path = malloc((strlen(data_dir) + strlen(entry) + 2) * sizeof(char));
-    combine_path(key_dir, entry, &key_path);
-    combine_path(data_dir, entry, &data_path);
+    key_path = combine_path(key_dir, entry);
+    data_path = combine_path(data_dir, entry);
     srand(time(0));
     length = strlen(value);
     otp_key = genkey(length);
@@ -56,6 +54,8 @@ int add(char *entry, char *value, char *key_dir, char *data_dir) {
     free(otp_key);
     return result;
 }
+
+int get(char *entry, char *key_dir, char *data_kir) {}
 
 int main(int argc, char *argv[]) {
     char *command, *commands[] = {"add"}, *entry, *key_dir, *data_dir;
