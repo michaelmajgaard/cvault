@@ -1,4 +1,5 @@
 #include "arg.h"
+#include "io.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,31 +20,6 @@ void print_help() {
         "\t-d --data-dir <directory>\tPath to data file.\n");
 }
 
-int read_all_text(char *path, char **content) {
-    FILE *fp;
-    if ((fp = fopen(path, "r")) != NULL) {
-        fseek(fp, 0L, SEEK_END);
-        int l;
-        if ((l = ftell(fp)) >= 0) {
-            *content = (char *)malloc((l + 1) * sizeof(char));
-            rewind(fp);
-            fread(*content, 1, l, fp);
-            (*content)[l] = '\0';
-            fclose(fp);
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int write_to_file(char *path, char *content) {
-    FILE *fp;
-    if ((fp = fopen(path, "w+")) != NULL) {
-        fprintf(fp, content);
-        fclose(fp);
-    }
-}
-
 char *genkey(int length) {
     char *buffer = (char *)malloc((length + 1) * sizeof(char));
     for (int i = 0; i < length; ++i) {
@@ -62,14 +38,8 @@ char *xor_otp(int length, char *value, char *otp_key) {
     return otp;
 }
 
-void combine_path(char *x, char *y, char **combined) {
-    strcat(*combined, x);
-    strcat(*combined, "/\0");
-    strcat(*combined, y);
-}
-
 int add(char *entry, char *value, char *key_dir, char *data_dir) {
-    int length;
+    int length, result;
     char *otp_key, *otp, *key_path, *data_path;
     key_path = malloc((strlen(key_dir) + strlen(entry) + 2) * sizeof(char));
     data_path = malloc((strlen(data_dir) + strlen(entry) + 2) * sizeof(char));
@@ -79,13 +49,12 @@ int add(char *entry, char *value, char *key_dir, char *data_dir) {
     length = strlen(value);
     otp_key = genkey(length);
     otp = xor_otp(length, value, otp_key);
-    write_to_file(data_path, otp);
-    write_to_file(key_path, otp_key);
+    result = write_all_text(data_path, otp) & write_all_text(key_path, otp_key);
     free(key_path);
     free(data_path);
     free(otp);
     free(otp_key);
-    return 1;
+    return result;
 }
 
 int main(int argc, char *argv[]) {
