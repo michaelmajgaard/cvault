@@ -55,11 +55,26 @@ int add(char *entry, char *value, char *key_dir, char *data_dir) {
     return result;
 }
 
-int get(char *entry, char *key_dir, char *data_kir) {}
+int get(char *entry, char *key_dir, char *data_dir, char **value) {
+    int result;
+    char *otp_key, *otp, *key_path, *data_path;
+    key_path = combine_path(key_dir, entry);
+    data_path = combine_path(data_dir, entry);
+    result = read_all_text(key_path, &otp_key) &&
+             read_all_text(data_path, &otp) && strlen(otp_key) == strlen(otp);
+    if (result) {
+        *value = xor_otp(strlen(otp), otp, otp_key);
+    }
+    free(key_path);
+    free(data_path);
+    free(otp);
+    free(otp_key);
+    return result;
+}
 
 int main(int argc, char *argv[]) {
-    char *command, *commands[] = {"add"}, *entry, *key_dir, *data_dir;
-    if (argc >= 9 && contains((command = argv[1]), 1, commands) &&
+    char *command, *commands[] = {"add", "get"}, *entry, *key_dir, *data_dir;
+    if (argc >= 8 && contains((command = argv[1]), 2, commands) &&
         parse_pos_arg(argc, argv, "-e", "--entry", &entry) &&
         parse_pos_arg(argc, argv, "-k", "--key-dir", &key_dir) &&
         parse_pos_arg(argc, argv, "-d", "--data-dir", &data_dir)) {
@@ -69,6 +84,12 @@ int main(int argc, char *argv[]) {
                 if (add(entry, value, key_dir, data_dir)) {
                     return 0;
                 }
+            }
+        } else if (!strcmp(command, "get")) {
+            char *value;
+            if (get(entry, key_dir, data_dir, &value)) {
+                printf("%s", value);
+                return 0;
             }
         }
     }
