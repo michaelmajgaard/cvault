@@ -85,12 +85,12 @@ int main(int argc, char *argv[]) {
     char *command, *commands[] = {"add", "get", "delete"}, *entry, *key_dir,
                    *data_dir;
     if (argc >= 8 && contains((command = argv[1]), 3, commands) &&
-        parse_pos_arg(argc, argv, "-e", "--entry", &entry) &&
-        parse_pos_arg(argc, argv, "-k", "--key-dir", &key_dir) &&
-        parse_pos_arg(argc, argv, "-d", "--data-dir", &data_dir)) {
+        parse_optv(argc, argv, "-e", "--entry", &entry) &&
+        parse_optv(argc, argv, "-k", "--key-dir", &key_dir) &&
+        parse_optv(argc, argv, "-d", "--data-dir", &data_dir)) {
         if (argc == 10 && !strcmp(command, "add")) {
             char *value;
-            if (parse_pos_arg(argc, argv, "-v", "--value", &value)) {
+            if (parse_optv(argc, argv, "-v", "--value", &value)) {
                 if (add(entry, value, key_dir, data_dir)) {
                     return 0;
                 }

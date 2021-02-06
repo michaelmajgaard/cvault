@@ -7,14 +7,14 @@
 
 void print_help() {
     printf("usage:\n"
-           "\tcvaultkg --size 256\n"
-           "\tcvaultkg -s 256 \n\n"
+           "\trkg -s <key-size> [-n]\n\n"
            "options:\n"
-           "\t-s --size {64 | 128 | 256 | 512}\tKey size in bits.\n");
+           "\t-s --size {64 | 128 | 256 | 512}\tKey size in bits.\n"
+           "\t-n\t\t\t\t\tOmit trailing newline in output.\n");
 }
 
 int parse_args(int argc, char *argv[], char **s) {
-    if (argc == 3 && parse_pos_arg(argc, argv, "-s", "--size", s)) {
+    if (argc == 3 && parse_optv(argc, argv, "-s", "--size", s)) {
         char *optv[4] = {"64", "128", "256", "512"};
         return contains(*s, 4, optv);
     }

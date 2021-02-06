@@ -10,11 +10,21 @@ int contains(char *arg, int optc, char *opts[]) {
     return 0;
 }
 
-int parse_pos_arg(int argc, char *argv[], char *short_name, char *long_name,
-                  char **value) {
+int parse_opt(int argc, char *argv[], char *short_name, char *long_name) {
+    for (int i = 1; i < argc - 1; ++i) {
+        char *c = argv[i];
+        if (!strcmp(c, short_name) || !strcmp(c, long_name)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int parse_optv(int argc, char *argv[], char *short_name, char *long_name,
+               char **value) {
     for (int i = 0; i < argc - 1; ++i) {
-        char *cur = argv[i];
-        if (!strcmp(cur, short_name) || !strcmp(cur, long_name)) {
+        char *c = argv[i];
+        if (!strcmp(c, short_name) || !strcmp(c, long_name)) {
             *value = argv[i + 1];
             return 1;
         }
