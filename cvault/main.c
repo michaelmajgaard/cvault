@@ -8,14 +8,17 @@
 void print_help() {
     printf(
         "usage:\n"
-        "\tcvault add --entry <entry> --value <value> --key-dir <directory> "
-        "--data-dir <directory>\n"
-        "\tcvault add -e <entry> -v <value> -k <directory> -d <directory>\n\n"
+        "\tcvault add -e <entry> -v <value> -k <directory> -d <directory>\n"
+        "\tcvault get -e <entry> -k <directory> -d <directory>\n"
+        "\tcvault delete -e <entry> -k <directory> -d <directory>\n\n"
         "commands:\n"
-        "\tadd\tAdds the specified entry to the data file\n\n"
+        "\tadd\tAdds the specified entry to the data file.\n"
+        "\tget\tGets the specified entry from the data file, decrypts it "
+        "and writes it to stdout.\n"
+        "\tdelete\tDeletes the specified entry from the data and key file.\n\n"
         "options:\n"
-        "\t-e --entry <entry>\tIdentifier of a given entry.\n"
-        "\t-v --value <value>\tValue to be stored under the given entry.\n"
+        "\t-e --entry <entry>\t\tIdentifier of a given entry.\n"
+        "\t-v --value <value>\t\tValue to be stored under the given entry.\n"
         "\t-k --key-dir <directory>\tPath to key file.\n"
         "\t-d --data-dir <directory>\tPath to data file.\n");
 }
@@ -72,9 +75,16 @@ int get(char *entry, char *key_dir, char *data_dir, char **value) {
     return result;
 }
 
+int delete (char *entry, char *key_dir, char *data_dir) {
+    char *key_path = combine_path(key_dir, entry),
+         *data_path = combine_path(data_dir, entry);
+    return !remove(key_path) && !remove(data_path);
+}
+
 int main(int argc, char *argv[]) {
-    char *command, *commands[] = {"add", "get"}, *entry, *key_dir, *data_dir;
-    if (argc >= 8 && contains((command = argv[1]), 2, commands) &&
+    char *command, *commands[] = {"add", "get", "delete"}, *entry, *key_dir,
+                   *data_dir;
+    if (argc >= 8 && contains((command = argv[1]), 3, commands) &&
         parse_pos_arg(argc, argv, "-e", "--entry", &entry) &&
         parse_pos_arg(argc, argv, "-k", "--key-dir", &key_dir) &&
         parse_pos_arg(argc, argv, "-d", "--data-dir", &data_dir)) {
@@ -89,6 +99,10 @@ int main(int argc, char *argv[]) {
             char *value;
             if (get(entry, key_dir, data_dir, &value)) {
                 printf("%s", value);
+                return 0;
+            }
+        } else if (!strcmp(command, "delete")) {
+            if (delete (entry, key_dir, data_dir)) {
                 return 0;
             }
         }
