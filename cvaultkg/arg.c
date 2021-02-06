@@ -11,7 +11,7 @@ int contains(char *arg, int optc, char *opts[]) {
 }
 
 int parse_opt(int argc, char *argv[], char *short_name, char *long_name) {
-    for (int i = 1; i < argc - 1; ++i) {
+    for (int i = 1; i < argc; ++i) {
         char *c = argv[i];
         if (!strcmp(c, short_name) || !strcmp(c, long_name)) {
             return 1;
@@ -22,7 +22,7 @@ int parse_opt(int argc, char *argv[], char *short_name, char *long_name) {
 
 int parse_optv(int argc, char *argv[], char *short_name, char *long_name,
                char **value) {
-    for (int i = 0; i < argc - 1; ++i) {
+    for (int i = 1; i < argc - 1; ++i) {
         char *c = argv[i];
         if (!strcmp(c, short_name) || !strcmp(c, long_name)) {
             *value = argv[i + 1];
