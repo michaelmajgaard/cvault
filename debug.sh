@@ -1,2 +1,2 @@
 #!/bin/sh
-./compile.sh && gdb $PWD/main.o
+./compile.sh && gdb main.o
