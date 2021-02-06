@@ -1,2 +1,2 @@
 #!/bin/sh
-./compile.sh && gdb main.o
+./compile-debug.sh && gdb ./bin/main.o
