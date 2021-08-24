@@ -60,7 +60,7 @@ int add(char *entry, char *value, char *key_dir, char *data_dir) {
 
 int get(char *entry, char *key_dir, char *data_dir, char **value) {
     int result;
-    char *otp_key, *otp, *key_path, *data_path;
+    char *otp_key, *otp = NULL, *key_path, *data_path;
     key_path = combine_path(key_dir, entry);
     data_path = combine_path(data_dir, entry);
     result = read_all_text(key_path, &otp_key) &&

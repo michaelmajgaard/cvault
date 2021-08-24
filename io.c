@@ -23,7 +23,7 @@ int read_all_text(char *path, char **content) {
 int write_all_text(char *path, char *content) {
     FILE *fp;
     if ((fp = fopen(path, "w+")) != NULL) {
-        fprintf(fp, content);
+        fprintf(fp,"%s", content);
         fclose(fp);
         return 1;
     }
