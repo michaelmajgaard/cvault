@@ -1,5 +1,5 @@
 # cvault
-Command line password manager written i C. Uses OTP encryption. Probably shouldn't be used for anything important. Was fun to write though.
+Command line password manager written i C. Uses xor OTP encryption. Probably shouldn't be used for anything important. Was fun to write though.
 
 ```
 usage:
