@@ -12,15 +12,15 @@ void print_help() {
         "\tcvault get -e <entry> -k <directory> -d <directory>\n"
         "\tcvault delete -e <entry> -k <directory> -d <directory>\n\n"
         "commands:\n"
-        "\tadd\tAdds the specified entry to the data file.\n"
-        "\tget\tGets the specified entry from the data file, decrypts it "
+        "\tadd\tEncrypts and adds the specified entry to the data directory.\n"
+        "\tget\tGets the specified entry from the data directory, decrypts it "
         "and writes it to stdout.\n"
-        "\tdelete\tDeletes the specified entry from the data and key file.\n\n"
+        "\tdelete\tDeletes the specified entry from the data and key directory.\n\n"
         "options:\n"
         "\t-e --entry <entry>\t\tIdentifier of a given entry.\n"
         "\t-v --value <value>\t\tValue to be stored under the given entry.\n"
-        "\t-k --key-dir <directory>\tPath to key file.\n"
-        "\t-d --data-dir <directory>\tPath to data file.\n");
+        "\t-k --key-dir <directory>\tPath to key directory.\n"
+        "\t-d --data-dir <directory>\tPath to data directory.\n");
 }
 
 char *genkey(int length) {
