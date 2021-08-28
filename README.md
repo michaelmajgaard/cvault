@@ -1,5 +1,5 @@
 # cvault
-Command line password manager written i C. Uses xor OTP encryption. Probably shouldn't be used for anything important. Was fun to write though.
+Command line password manager written i C. Uses xor OTP encryption. Probably shouldn't be used for anything important. Was fun to write though. Compliments [rkg](https://github.com/michaelmajgaard/rkg) well.
 
 ```
 usage:
@@ -19,7 +19,7 @@ options:
         -d --data-dir <directory>       Path to data directory.
 ```
 
-## Usage examples
+## Example using [cvault](https://github.com/michaelmajgaard/cvault) and [rkg](https://github.com/michaelmajgaard/rkg)
 ```
 generate_password.sh
 ====================
